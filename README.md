@@ -214,20 +214,43 @@ docker-compose down -v
 
 ## Quick Start
 
-### Option 1: Docker Compose (Recommended)
+### Option 1: Full Docker Stack (Easiest)
 
-Start all services with Docker:
+Run everything (infrastructure + backends + frontend) with a single command:
 
 ```bash
-# Start messaging infrastructure only
-docker-compose up rabbitmq kafka zookeeper
+# Build and start all services
+docker-compose up --build
 
-# Access RabbitMQ Management UI
-open http://localhost:15672
-# Login: admin / admin123
+# Or run in detached mode
+docker-compose up --build -d
 ```
 
-### Option 2: Local Development
+This will start:
+- RabbitMQ (ports 5672, 15672)
+- Kafka (ports 9092, 9093)
+- Zookeeper (port 2181)
+- RabbitMQ POC Backend (port 8081)
+- Kafka POC Backend (port 8082)
+- Web Client (port 80)
+
+**Access the application:**
+- Web Client: http://localhost
+- RabbitMQ Management UI: http://localhost:15672 (admin/admin123)
+- RabbitMQ POC API: http://localhost:8081/api/health
+- Kafka POC API: http://localhost:8082/api/health
+
+**To stop all services:**
+```bash
+docker-compose down
+
+# To remove volumes as well
+docker-compose down -v
+```
+
+### Option 2: Docker Infrastructure + Local Development
+
+Start only the messaging infrastructure with Docker and run the applications locally:
 
 #### 1. Start Messaging Services
 
