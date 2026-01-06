@@ -8,8 +8,8 @@ Create proof of concept projects to test and compare **RabbitMQ** and **Kafka** 
 
 ### Backend Applications
 - **Framework**: Spring Boot (latest stable version)
-- **Language**: Java 17 or higher
-- **Build Tool**: Maven or Gradle
+- **Language**: Java 21
+- **Build Tool**: Maven 3.9.11
 
 ### Frontend Application
 - **Type**: Web client
