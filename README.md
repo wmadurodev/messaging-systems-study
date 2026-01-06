@@ -50,6 +50,168 @@ A proof of concept project for comparing RabbitMQ and Kafka messaging systems th
 - Docker and Docker Compose
 - Node.js 20+ (for web client development)
 
+## How to Run
+
+Follow these step-by-step instructions to get the complete system up and running:
+
+### Step 1: Start the Messaging Infrastructure
+
+First, start RabbitMQ and Kafka using Docker Compose:
+
+```bash
+# Navigate to the project root directory
+cd /path/to/messaging-systems-study
+
+# Start RabbitMQ, Kafka, and Zookeeper
+docker-compose up rabbitmq kafka zookeeper -d
+```
+
+Wait for the services to be fully ready (approximately 30-60 seconds). You can check the status with:
+
+```bash
+docker-compose ps
+```
+
+All services should show as "healthy" or "running".
+
+**Verify RabbitMQ:**
+- Access RabbitMQ Management UI: http://localhost:15672
+- Login credentials: `admin` / `admin123`
+
+**Verify Kafka:**
+```bash
+# List Kafka topics (should work without error)
+docker exec kafka-messaging-study kafka-topics --list --bootstrap-server localhost:9092
+```
+
+### Step 2: Run the RabbitMQ POC Backend
+
+Open a new terminal window and run:
+
+```bash
+# Navigate to the RabbitMQ POC directory
+cd rabbitmq-poc
+
+# Run the Spring Boot application
+mvn spring-boot:run
+```
+
+Wait for the application to start. You should see:
+```
+Started RabbitMQApplication in X.XXX seconds
+```
+
+**Verify the backend is running:**
+```bash
+curl http://localhost:8081/api/health
+```
+
+Expected response:
+```json
+{"status":"UP","connected":true,"type":"RABBITMQ","details":{"host":"localhost","port":5672}}
+```
+
+### Step 3: Run the Kafka POC Backend
+
+Open another new terminal window and run:
+
+```bash
+# Navigate to the Kafka POC directory
+cd kafka-poc
+
+# Run the Spring Boot application
+mvn spring-boot:run
+```
+
+Wait for the application to start. You should see:
+```
+Started KafkaApplication in X.XXX seconds
+```
+
+**Verify the backend is running:**
+```bash
+curl http://localhost:8082/api/health
+```
+
+Expected response:
+```json
+{"status":"UP","connected":true,"type":"KAFKA","details":{"bootstrapServers":"localhost:9092"}}
+```
+
+### Step 4: Run the React Web Client
+
+Open one more terminal window and run:
+
+```bash
+# Navigate to the web client directory
+cd web-client
+
+# Install dependencies (first time only)
+npm install
+
+# Start the development server
+npm run dev
+```
+
+The web client will start on port 5173. You should see:
+```
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+### Step 5: Access the Application
+
+Open your web browser and navigate to:
+
+```
+http://localhost:5173
+```
+
+You should see the Messaging Systems Comparison interface with three tabs:
+- **RabbitMQ** - Test RabbitMQ messaging
+- **Kafka** - Test Kafka messaging
+- **Comparison** - Side-by-side comparison of both systems
+
+### Step 6: Test the System
+
+**To send a single message:**
+1. Select either the RabbitMQ or Kafka tab
+2. Enter message content in the "Single Message" textarea
+3. Click "Send Single Message"
+4. Watch the message appear in the "Received Messages" section in real-time
+
+**To send bulk messages:**
+1. Set the count (e.g., 100, 1000)
+2. Customize the message template (use `{index}` as a placeholder)
+3. Click "Send Bulk Messages"
+4. Monitor the throughput in the Metrics dashboard
+
+**To compare systems:**
+1. Send messages through both RabbitMQ and Kafka
+2. Click the "Comparison" tab
+3. View side-by-side metrics including throughput, latency, and success rates
+
+### Step 7: Shutdown
+
+When you're done testing, shut down the services gracefully:
+
+```bash
+# Stop the web client (Ctrl+C in the terminal)
+
+# Stop the Kafka POC backend (Ctrl+C in the terminal)
+
+# Stop the RabbitMQ POC backend (Ctrl+C in the terminal)
+
+# Stop Docker services
+docker-compose down
+```
+
+To remove all data and start fresh:
+
+```bash
+docker-compose down -v
+```
+
 ## Quick Start
 
 ### Option 1: Docker Compose (Recommended)
