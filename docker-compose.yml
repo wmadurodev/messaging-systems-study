@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  # RabbitMQ Service
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq-messaging-study
+    ports:
+      - "5672:5672"      # AMQP protocol
+      - "15672:15672"    # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - messaging-network
+
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper-messaging-study
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    networks:
+      - messaging-network
+
+  # Kafka Service
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-messaging-study
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - messaging-network
+
+  # RabbitMQ POC Backend (will be added after backend is built)
+  # rabbitmq-poc:
+  #   build:
+  #     context: ./rabbitmq-poc
+  #     dockerfile: Dockerfile
+  #   container_name: rabbitmq-poc-backend
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #     SPRING_RABBITMQ_HOST: rabbitmq
+  #     SPRING_RABBITMQ_PORT: 5672
+  #     SPRING_RABBITMQ_USERNAME: admin
+  #     SPRING_RABBITMQ_PASSWORD: admin123
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   networks:
+  #     - messaging-network
+
+  # Kafka POC Backend (will be added after backend is built)
+  # kafka-poc:
+  #   build:
+  #     context: ./kafka-poc
+  #     dockerfile: Dockerfile
+  #   container_name: kafka-poc-backend
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #   networks:
+  #     - messaging-network
+
+  # React Web Client (will be added after frontend is built)
+  # web-client:
+  #   build:
+  #     context: ./web-client
+  #     dockerfile: Dockerfile
+  #   container_name: web-client
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - rabbitmq-poc
+  #     - kafka-poc
+  #   networks:
+  #     - messaging-network
+
+volumes:
+  rabbitmq_data:
+  zookeeper_data:
+  zookeeper_logs:
+  kafka_data:
+
+networks:
+  messaging-network:
+    driver: bridge
