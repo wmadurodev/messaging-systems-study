@@ -97,21 +97,7 @@ services:
         condition: service_healthy
     networks:
       - messaging-network
-
-  # React Web Client
-  web-client:
-    build:
-      context: ./web-client
-      dockerfile: Dockerfile
-    container_name: web-client
-    ports:
-      - "80:80"
-    depends_on:
-      - rabbitmq-poc
-      - kafka-poc
-    networks:
-      - messaging-network
-
+      
 volumes:
   rabbitmq_data:
   zookeeper_data:
