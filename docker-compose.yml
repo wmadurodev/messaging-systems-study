@@ -64,8 +64,8 @@ services:
   # RabbitMQ POC Backend
   rabbitmq-poc:
     build:
-      context: ./rabbitmq-poc
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./rabbitmq-poc/Dockerfile
     container_name: rabbitmq-poc-backend
     ports:
       - "8081:8081"
@@ -84,8 +84,8 @@ services:
   # Kafka POC Backend
   kafka-poc:
     build:
-      context: ./kafka-poc
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./kafka-poc/Dockerfile
     container_name: kafka-poc-backend
     ports:
       - "8082:8082"
@@ -97,7 +97,21 @@ services:
         condition: service_healthy
     networks:
       - messaging-network
-      
+
+  # Web Client POC (Frontend)
+  web-client-poc:
+    build:
+      context: ./web-client-poc
+      dockerfile: Dockerfile
+    container_name: web-client-poc
+    ports:
+      - "80:80"
+    # depends_on:
+      # - rabbitmq-poc
+      # - kafka-poc
+    networks:
+      - messaging-network
+
 volumes:
   rabbitmq_data:
   zookeeper_data:
