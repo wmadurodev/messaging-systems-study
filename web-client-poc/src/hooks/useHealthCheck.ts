@@ -16,7 +16,7 @@ export const useHealthCheck = ({
   enabled = true,
   interval = HEALTH_CHECK_INTERVAL,
 }: UseHealthCheckOptions) => {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   // Get store actions based on system
   const setHealth = useStore((state) =>

@@ -10,7 +10,6 @@ import {
   BulkMessageResponse,
   MessageSendResponse,
 } from '../types';
-import { parseTemplate } from '../utils/templateParser';
 
 interface UseMessagingOptions {
   system: SystemType;

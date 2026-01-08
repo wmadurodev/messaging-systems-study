@@ -18,7 +18,7 @@ export const useStore = create<AppStore>()(
       }),
       {
         name: 'messaging-systems-storage', // LocalStorage key
-        partialPersist: ['ui'], // Only persist UI state
+        partialize: (state) => ({ ui: state.ui }), // Only persist UI state
       }
     ),
     {

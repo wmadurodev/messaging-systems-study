@@ -1,4 +1,4 @@
-import { WebSocketClient, MessageCallback } from './WebSocketClient';
+import { WebSocketClient } from './WebSocketClient';
 import { RABBITMQ_WS_URL, KAFKA_WS_URL, WS_TOPICS } from '../../utils/constants';
 import { Message, MessageStats } from '../../types';
 

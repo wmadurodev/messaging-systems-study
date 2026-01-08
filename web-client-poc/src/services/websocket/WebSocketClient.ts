@@ -10,9 +10,6 @@ export class WebSocketClient {
   private subscriptions: Map<string, StompSubscription> = new Map();
   private url: string;
   private reconnectDelay: number = 1000;
-  private maxReconnectDelay: number = 30000;
-  private reconnectAttempts: number = 0;
-  private maxReconnectAttempts: number = 10;
   private onConnectCallback?: ConnectCallback;
   private onDisconnectCallback?: () => void;
   private onErrorCallback?: ErrorCallback;
@@ -48,7 +45,6 @@ export class WebSocketClient {
       // Connection success handler
       this.client.onConnect = () => {
         console.log(`[WebSocket] Connected to ${this.url}`);
-        this.reconnectAttempts = 0;
         this.reconnectDelay = 1000;
         if (this.onConnectCallback) {
           this.onConnectCallback();

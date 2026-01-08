@@ -106,9 +106,9 @@ services:
     container_name: web-client-poc
     ports:
       - "80:80"
-    # depends_on:
-      # - rabbitmq-poc
-      # - kafka-poc
+    depends_on:
+      - rabbitmq-poc
+      - kafka-poc
     networks:
       - messaging-network
 

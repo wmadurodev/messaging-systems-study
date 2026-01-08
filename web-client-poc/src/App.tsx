@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, Container, Tabs, Tab, AppBar, Toolbar, Typography, Stack } from '@mui/material';
 import { useStore } from './store';
 import { useWebSocket } from './hooks/useWebSocket';
