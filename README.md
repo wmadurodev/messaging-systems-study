@@ -212,6 +212,12 @@ To remove all data and start fresh:
 docker-compose down -v
 ```
 
+To completely clean up everything (volumes, images, and orphan containers):
+
+```bash
+docker-compose down -v --rmi all --remove-orphans
+```
+
 ## Quick Start
 
 ### Option 1: Full Docker Stack (Easiest)
